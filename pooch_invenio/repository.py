@@ -41,7 +41,7 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
         self.base_url = base_url
         self.record_id = record_id
         self.archive_url = f"{base_url}/records/{record_id}"
-        self._record_details: Optional[dict] = None
+        self._record_files: Optional[dict] = None
 
     @classmethod
     def initialize(cls, doi: str, archive_url: str):
@@ -73,54 +73,52 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
         base_url = "/".join(parts[:-2])
         record_id = parts[-1]
 
-        response = cls._get_record_details_response(base_url, record_id)
+        response = cls._get_record_files_response(base_url, record_id)
 
         # If we failed, this is probably not an InvenioRDM instance
         if 400 <= response.status_code < 600:
             return None
 
         repository = cls(doi, base_url, record_id)
-        repository._record_details = response.json()
+        repository._record_files = response.json()
         return repository
 
     @staticmethod
-    def _get_record_details_response(base_url: str, record_id: str):
+    def _get_record_files_response(base_url: str, record_id: str):
+        import requests  # pylint: disable=C0415
+
+        return requests.get(
+            f"{base_url}/api/records/{record_id}/files",
+            headers={"Accept": "application/json"},
+            timeout=DEFAULT_TIMEOUT,
+        )
+
+    @cached_property
+    def record_files(self) -> dict:
+        if self._record_files is None:
+            self._record_files = self._get_record_files_response(
+                self.base_url, self.record_id
+            ).json()
+        return {entry["key"]: entry for entry in self._record_files["entries"]}
+
+    @cached_property
+    def record_details(self):
         import requests  # pylint: disable=C0415
 
         # We use the special mimetype to get a consistent serialization schema of records
         # across different InvenioRDM instances.
+        # As we already decided this is an InvenioRDM instance, we assume this request returns
+        # valid json.
         return requests.get(
-            f"{base_url}/api/records/{record_id}",
+            f"{self.base_url}/api/records/{self.record_id}",
             headers={"Accept": "application/vnd.inveniordm.v1+json"},
-            timeout=DEFAULT_TIMEOUT,
-        )
-
-    @property
-    def record_details(self) -> dict:
-        if self._record_details is None:
-            self._record_details = self._get_record_details_response(
-                self.base_url, self.record_id
-            ).json()
-        return self._record_details
-
-    def _get_record_files(self) -> dict:
-        import requests  # pylint: disable=C0415
-
-        # As we already know this is an InvenioRDM Repository, we assume
-        # the "files" endpoint exists and returns a valid json response.
-        return requests.get(
-            f"{self.base_url}/api/records/{self.record_id}/files",
-            headers={"Accept": "application/json"},
             timeout=DEFAULT_TIMEOUT,
         ).json()
 
-    @cached_property
-    def record_files(self) -> dict:
-        entries = self.record_details["files"].get("entries")
-        if entries is None:
-            response = self._get_record_files()
-            return {entry["key"]: entry for entry in response["entries"]}
-        return entries
+    def license(self):
+        # TODO: construct License Objects from this list, check for None
+        rights: Optional[list] = self.record_details["metadata"].get("rights")
+        return rights
 
     def download_url(self, file_name: str) -> str:
         """
