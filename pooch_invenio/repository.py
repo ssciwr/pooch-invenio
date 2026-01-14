@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Dict
 from functools import cached_property
 
 from pooch_doi import DataRepository
@@ -73,24 +73,67 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
         base_url = "/".join(parts[:-2])
         record_id = parts[-1]
 
-        response = cls._get_record_files_response(base_url, record_id)
+        # We don't check rate limiting because this might not be an InvenioRDM instance
+        response = cls._get_record_files_response(
+            base_url, record_id, check_rate_limit=False
+        )
 
         # If we failed, this is probably not an InvenioRDM instance
         if 400 <= response.status_code < 600:
             return None
 
         repository = cls(doi, base_url, record_id)
+        # TODO: decide what to do if this raises requests.exceptions.JSONDecodeError
         repository._record_files = response.json()
         return repository
 
     @staticmethod
-    def _get_record_files_response(base_url: str, record_id: str):
+    def _make_request(
+        url: str, headers: Optional[Dict[str, str]] = None, check_rate_limit=True
+    ):
+        headers = headers if headers is not None else dict()
+        headers.update(
+            {
+                "User-Agent": "pooch/1.8.2 ([https://github.com/fatiando/pooch)](https://github.com/ssciwr/pooch-invenio))"
+            }
+        )
+
         import requests  # pylint: disable=C0415
 
-        return requests.get(
+        r = requests.get(url, headers=headers, timeout=DEFAULT_TIMEOUT)
+
+        if check_rate_limit and r.status_code == 429:
+            raise RuntimeError(
+                "You are probably rate-limited. Please try again in a few minutes."
+            )
+
+        return r
+
+    @staticmethod
+    def _make_request_to_json(
+        url: str, headers: Optional[Dict[str, str]] = None, check_rate_limit=True
+    ):
+        import requests  # pylint: disable=C0415
+
+        try:
+            return InvenioRDMRepository._make_request(
+                url, headers=headers, check_rate_limit=check_rate_limit
+            ).json()
+        except requests.exceptions.JSONDecodeError:
+            raise RuntimeError(
+                f"An issue occurred decoding the JSON response from '{url}'."
+                f"This should not happen."
+                f"Please open an issue at https://github.com/ssciwr/pooch-invenio/issues"
+            )
+
+    @staticmethod
+    def _get_record_files_response(
+        base_url: str, record_id: str, check_rate_limit: bool = True
+    ):
+        return InvenioRDMRepository._make_request(
             f"{base_url}/api/records/{record_id}/files",
             headers={"Accept": "application/json"},
-            timeout=DEFAULT_TIMEOUT,
+            check_rate_limit=check_rate_limit,
         )
 
     @cached_property
@@ -103,21 +146,18 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
 
     @cached_property
     def record_details(self):
-        import requests  # pylint: disable=C0415
-
         # We use the special mimetype to get a consistent serialization schema of records
         # across different InvenioRDM instances.
         # As we already decided this is an InvenioRDM instance, we assume this request returns
         # valid json.
-        return requests.get(
+        return InvenioRDMRepository._make_request_to_json(
             f"{self.base_url}/api/records/{self.record_id}",
             headers={"Accept": "application/vnd.inveniordm.v1+json"},
-            timeout=DEFAULT_TIMEOUT,
-        ).json()
+        )
 
-    def license(self):
-        # TODO: construct License Objects from this list, check for None
-        rights: Optional[list] = self.record_details["metadata"].get("rights")
+    def licenses(self):
+        # TODO: construct License Objects from this list
+        rights: list = self.record_details["metadata"].get("rights", list())
         return rights
 
     def download_url(self, file_name: str) -> str:
