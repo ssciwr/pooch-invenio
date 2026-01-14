@@ -193,3 +193,30 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
             The registry dictionary.
         """
         return {k: v["checksum"] for k, v in self.record_files.items()}
+
+
+_KNOWN_INVENIORDM_INSTANCES = ("zenodo.org",)
+
+
+class KnownInstancesInvenioRDMRepository(InvenioRDMRepository):
+    init_requires_requests = False
+
+    @classmethod
+    def initialize(cls, doi: str, archive_url: str):
+        # Remove any trailing slashes
+        archive_url = archive_url.strip("/")
+
+        # Pre-flight check to match only <base_url>/records/<record_id> archive_urls.
+        parts = archive_url.split("/")
+        if len(parts) < 2 or parts[-2] != "records":
+            return None
+
+        base_url = "/".join(parts[:-2])
+        record_id = parts[-1]
+
+        from urllib.parse import urlsplit  # pylint: disable=C0415
+
+        if urlsplit(archive_url).hostname not in _KNOWN_INVENIORDM_INSTANCES:
+            return None
+
+        return cls(doi, base_url, record_id)
