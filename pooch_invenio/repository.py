@@ -155,10 +155,42 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
             headers={"Accept": "application/vnd.inveniordm.v1+json"},
         )
 
+    @staticmethod
+    def _rights_entry_to_license(entry: dict) -> License:
+        _empty_dict = dict()
+        _empty_string = ""
+        name = entry.get("title", _empty_dict).get("en", _empty_string) or entry.get(
+            "id", _empty_string
+        )
+        name = name if len(name) > 0 else None
+        description = entry.get("description", _empty_dict).get("en", _empty_string)
+        description = description if len(description) > 0 else None
+        identifiers = list()
+        references = list()
+        if "props" in entry:
+            url = entry["props"].get("url")
+            if url is not None:
+                identifiers.append(
+                    LicenseIdentifier(scheme=LicenseIdentifierScheme.URL, value=url)
+                )
+                references.append(
+                    LicenseReference(role=LicenseReferenceRole.TEXT, uri=url)
+                )
+
+        return License(
+            name=name,
+            description=description,
+            identifiers=identifiers,
+            references=references,
+        )
+
     def licenses(self):
-        # TODO: construct License Objects from this list
-        rights: list = self.record_details["metadata"].get("rights", list())
-        return rights
+        return list(
+            map(
+                InvenioRDMRepository._rights_entry_to_license,
+                self.record_details["metadata"].get("rights", list()),
+            )
+        )
 
     def download_url(self, file_name: str) -> str:
         """

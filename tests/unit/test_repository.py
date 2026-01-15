@@ -2,7 +2,7 @@ import pytest
 
 from tests.data.zenodo_record import ZenodoTestRecord
 
-from pooch_doi.license import SPDXLicense
+from pooch_doi.license import *
 from pooch_invenio import InvenioRDMRepository
 
 
@@ -42,9 +42,54 @@ licenses_testcases = [
         {"unknown_key": {"rights": []}},
         KeyError("metadata"),
     ),
-    # TESTCASE 3: 1 license in API response
-    # TODO: refactor pooch licenses objects and then enable this test
-    # ( False, ZenodoTestRecord.record_id, 200, ZenodoTestRecord.endpoints.details.response, [SPDXLicense()] ),
+    # TESTCASE 3: 1 custom license in API response
+    (
+        True,
+        ZenodoTestRecord.record_id,
+        200,
+        {
+            "metadata": {
+                "rights": [
+                    {
+                        "id": "other-pd",
+                        "title": {"en": "Other (Public Domain)"},
+                        "description": {"en": ""},
+                    }
+                ]
+            }
+        },
+        [
+            License(
+                name="Other (Public Domain)",
+                description=None,
+            )
+        ],
+    ),
+    # TESTCASE 4: 1 license in API response
+    (
+        False,
+        ZenodoTestRecord.record_id,
+        200,
+        ZenodoTestRecord.endpoints.details.response,
+        [
+            License(
+                name="Creative Commons Attribution 4.0 International",
+                description="The Creative Commons Attribution license allows re-distribution and re-use of a licensed work on the condition that the creator is appropriately credited.",
+                identifiers=[
+                    LicenseIdentifier(
+                        scheme=LicenseIdentifierScheme.URL,
+                        value="https://creativecommons.org/licenses/by/4.0/legalcode",
+                    )
+                ],
+                references=[
+                    LicenseReference(
+                        role=LicenseReferenceRole.TEXT,
+                        uri="https://creativecommons.org/licenses/by/4.0/legalcode",
+                    )
+                ],
+            )
+        ],
+    ),
 ]
 
 
