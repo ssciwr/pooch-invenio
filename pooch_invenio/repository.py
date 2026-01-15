@@ -92,6 +92,7 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
         url: str, headers: Optional[Dict[str, str]] = None, check_rate_limit=True
     ):
         headers = headers if headers is not None else dict()
+        # Add pooch User-Agent (see https://github.com/fatiando/pooch/issues/502)
         headers.update(
             {
                 "User-Agent": "pooch/1.8.2 ([https://github.com/fatiando/pooch)](https://github.com/ssciwr/pooch-invenio))"
@@ -103,6 +104,7 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
         r = requests.get(url, headers=headers, timeout=DEFAULT_TIMEOUT)
 
         if check_rate_limit and r.status_code == 429:
+            # TODO: probably only warn instead of raising
             raise RuntimeError(
                 "You are probably rate-limited. Please try again in a few minutes."
             )
