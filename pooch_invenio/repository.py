@@ -1,8 +1,8 @@
 from typing import Optional, Dict
 from functools import cached_property
 
-from pooch_doi import DataRepository
-from pooch_doi.repository import DEFAULT_TIMEOUT
+from pooch_doi.license import *
+from pooch_doi.repository import DataRepository, DEFAULT_TIMEOUT
 
 
 class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-docstring
