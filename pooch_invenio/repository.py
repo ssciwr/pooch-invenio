@@ -1,4 +1,4 @@
-from typing import Optional, Dict
+from typing import Optional, Dict, Tuple
 from functools import cached_property
 
 from pooch_doi.license import *
@@ -6,6 +6,8 @@ from pooch_doi.repository import DataRepository, DEFAULT_TIMEOUT
 
 
 class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-docstring
+    allowed_exceptions: Tuple[type[Exception]] = ()
+
     # A URL for an issue tracker for this implementation
     issue_tracker: Optional[str] = "https://github.com/ssciwr/pooch-invenio/issues"
 
