@@ -11,7 +11,9 @@ pytest_plugins = ["pooch_doi.test_utils"]
 @pytest.fixture(scope="session")
 def data_repo_tester(create_data_repo_tester_type):
     return create_data_repo_tester_type(
-        InvenioRDMRepository, base_url_fallback="https://zenodo.org"
+        InvenioRDMRepository,
+        archive_base_url_fallback="https://zenodo.org",
+        api_base_url_fallback="https://zenodo.org",
     )
 
 
