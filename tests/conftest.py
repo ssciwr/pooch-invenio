@@ -5,7 +5,7 @@ from pooch_invenio.repository import (
 )
 from tests.data.zenodo_record import ZenodoTestRecord
 
-pytest_plugins = ["pooch_doi.test_utils"]
+pytest_plugins = ["pooch_doi.testkit"]
 
 
 @pytest.fixture(scope="session")
