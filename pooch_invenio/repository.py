@@ -188,8 +188,11 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
         )
 
     def licenses(self):
+        copyright = self.record_details["metadata"].get("copyright")
+
         return list(
-            map(
+            (setattr(l, "copyright", copyright) or l)
+            for l in map(
                 InvenioRDMRepository._rights_entry_to_license,
                 self.record_details["metadata"].get("rights", list()),
             )
