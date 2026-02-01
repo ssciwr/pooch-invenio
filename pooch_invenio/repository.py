@@ -105,9 +105,9 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
         r = requests.get(url, headers=headers, timeout=DEFAULT_TIMEOUT)
 
         if check_rate_limit and r.status_code == 429:
-            # TODO: probably only warn instead of raising
             raise RuntimeError(
-                "You are probably rate-limited. Please try again in a few minutes."
+                f"The request to '{url}' returned with status code {r.status_code!s}."
+                f"This means you are probably rate-limited. Please try again in a few minutes."
             )
 
         return r
