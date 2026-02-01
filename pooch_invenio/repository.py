@@ -85,7 +85,6 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
             return None
 
         repository = cls(doi, base_url, record_id)
-        # TODO: decide what to do if this raises requests.exceptions.JSONDecodeError
         repository._record_files = response.json()
         return repository
 
