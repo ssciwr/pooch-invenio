@@ -10,6 +10,24 @@ def test_sanity_checks(sanity_check_data_repo):
     sanity_check_data_repo(InvenioRDMRepository)
 
 
+def test_direct_init(data_repo_tester):
+    repo_tester = data_repo_tester()
+    repo = repo_tester.data_repo_class(
+        ZenodoTestRecord.doi, ZenodoTestRecord.base_url, ZenodoTestRecord.record_id
+    )
+    with repo_tester.endpoint_mocker() as m:
+        m.get(
+            ZenodoTestRecord.endpoints.files.path,
+            json=ZenodoTestRecord.endpoints.files.response,
+        )
+        assert (
+            repo.download_url("tiny-data.txt")
+            == ZenodoTestRecord.endpoints.files.response["entries"][1]["links"][
+                "content"
+            ]
+        )
+
+
 def test_initialize(data_repo_tester):
     # TESTCASE 1: With invalid archive_path -> invalid archive_url
     data_repo_tester().assert_repo_does_not_initialize(archive_path="/somevalue/abc")
