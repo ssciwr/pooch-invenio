@@ -52,7 +52,7 @@ licenses_testcases = [
         ZenodoTestRecord.record_id,
         {"status_code": 429, "json": {}},
         RuntimeError(
-            f"The request to 'https://zenodo.org{ZenodoTestRecord.endpoints.details.path}' returned with status code 429."
+            f"The request to '{ZenodoTestRecord.url_for(ZenodoTestRecord.endpoints.details)}' returned with status code 429."
             f"This means you are probably rate-limited. Please try again in a few minutes."
         ),
     ),
@@ -62,7 +62,7 @@ licenses_testcases = [
         ZenodoTestRecord.record_id,
         {"status_code": 200, "text": "this_is_not_json"},
         RuntimeError(
-            f"An issue occurred decoding the JSON response from 'https://zenodo.org{ZenodoTestRecord.endpoints.details.path}'."
+            f"An issue occurred decoding the JSON response from '{ZenodoTestRecord.url_for(ZenodoTestRecord.endpoints.details)}'."
             f"This should not happen."
             f"Please open an issue at https://github.com/ssciwr/pooch-invenio/issues"
         ),

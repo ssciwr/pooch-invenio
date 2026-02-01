@@ -1,4 +1,5 @@
 import dataclasses
+from urllib.parse import urljoin
 
 
 class classproperty(property):
@@ -14,6 +15,10 @@ class _ZenodoEndpoint:
 
 class ZenodoTestRecord:
     @classproperty
+    def base_url(cls):
+        return "https://zenodo.org"
+
+    @classproperty
     def doi(cls) -> str:
         return "10.5281/zenodo.4924875"
 
@@ -24,6 +29,10 @@ class ZenodoTestRecord:
     @classproperty
     def archive_path(cls) -> str:
         return f"/records/{cls.record_id}"
+
+    @classmethod
+    def url_for(cls, endpoint: _ZenodoEndpoint) -> str:
+        return urljoin(cls.base_url, endpoint.path)
 
     class endpoints:
         files = _ZenodoEndpoint(
