@@ -75,7 +75,7 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
         base_url = "/".join(parts[:-2])
         record_id = parts[-1]
 
-        # We don't check rate limiting because this might not be an InvenioRDM instance
+        # We don't check rate limiting here because this might not be an InvenioRDM instance
         response = cls._get_record_files_response(
             base_url, record_id, check_rate_limit=False
         )
