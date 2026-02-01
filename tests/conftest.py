@@ -24,14 +24,16 @@ def known_instances_data_repo_tester(create_data_repo_tester_type):
 
 @pytest.fixture
 def create_initialized_data_repo_tester(data_repo_tester):
-    def _func(record_id):
+    def _func():
         instance = data_repo_tester()
         with instance.endpoint_mocker() as m:
             m.get(
-                f"/api/records/{record_id!s}/files",
+                ZenodoTestRecord.endpoints.files.path,
                 json=ZenodoTestRecord.endpoints.files.response,
             )
-            instance.initialize_repo("doi", f"/records/{record_id}")
+            instance.initialize_repo(
+                ZenodoTestRecord.doi, ZenodoTestRecord.archive_path
+            )
         return instance
 
     return _func

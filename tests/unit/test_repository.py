@@ -35,21 +35,18 @@ licenses_testcases = [
     # TESTCASE 1: empty API response
     (
         True,
-        ZenodoTestRecord.record_id,
         {"status_code": 200, "json": {"metadata": {"rights": []}}},
         [],
     ),
     # TESTCASE 2: malformed API response
     (
         True,
-        ZenodoTestRecord.record_id,
         {"status_code": 200, "json": {"unknown_key": {"rights": []}}},
         KeyError("metadata"),
     ),
     # TESTCASE 3: rate-limited API response
     (
         True,
-        ZenodoTestRecord.record_id,
         {"status_code": 429, "json": {}},
         RuntimeError(
             f"The request to '{ZenodoTestRecord.url_for(ZenodoTestRecord.endpoints.details)}' returned with status code 429."
@@ -59,7 +56,6 @@ licenses_testcases = [
     # TESTCASE 4: non-json API response
     (
         True,
-        ZenodoTestRecord.record_id,
         {"status_code": 200, "text": "this_is_not_json"},
         RuntimeError(
             f"An issue occurred decoding the JSON response from '{ZenodoTestRecord.url_for(ZenodoTestRecord.endpoints.details)}'."
@@ -70,7 +66,6 @@ licenses_testcases = [
     # TESTCASE 5: 2 custom licenses in API response
     (
         True,
-        ZenodoTestRecord.record_id,
         {
             "status_code": 200,
             "json": {
@@ -107,7 +102,6 @@ licenses_testcases = [
     # TESTCASE 6: 1 license in API response
     (
         False,
-        ZenodoTestRecord.record_id,
         {"status_code": 200, "json": ZenodoTestRecord.endpoints.details.response},
         [
             License(
@@ -131,17 +125,16 @@ licenses_testcases = [
 ]
 
 
-@pytest.mark.parametrize("always_mock,record_id,mock_kwargs,result", licenses_testcases)
+@pytest.mark.parametrize("always_mock,mock_kwargs,result", licenses_testcases)
 def test_licenses(
     create_initialized_data_repo_tester,
     always_mock,
-    record_id,
     mock_kwargs,
     result,
 ):
-    repo_tester = create_initialized_data_repo_tester(record_id)
+    repo_tester = create_initialized_data_repo_tester()
     with repo_tester.endpoint_mocker(always_mock=always_mock) as m:
-        m.get(f"/api/records/{record_id}", **mock_kwargs)
+        m.get(ZenodoTestRecord.endpoints.details.path, **mock_kwargs)
         if isinstance(result, Exception):
             with pytest.raises(type(result), match=str(result)):
                 repo_tester.repo.licenses()
@@ -199,7 +192,7 @@ def test_download_url(data_repo_tester, always_mock, json_resp, filename, result
     with repo_tester.endpoint_mocker(always_mock=always_mock) as m:
         m.get(ZenodoTestRecord.endpoints.files.path, json=json_resp)
         repo_tester.initialize_repo(
-            doi="doi", archive_path=ZenodoTestRecord.archive_path
+            doi=ZenodoTestRecord.doi, archive_path=ZenodoTestRecord.archive_path
         )
         if isinstance(result, Exception):
             with pytest.raises(type(result), match=str(result)):
@@ -249,7 +242,7 @@ def test_create_registry(data_repo_tester, always_mock, json_resp, result):
     with repo_tester.endpoint_mocker(always_mock=always_mock) as m:
         m.get(ZenodoTestRecord.endpoints.files.path, json=json_resp)
         repo_tester.initialize_repo(
-            doi="doi", archive_path=ZenodoTestRecord.archive_path
+            doi=ZenodoTestRecord.doi, archive_path=ZenodoTestRecord.archive_path
         )
         if isinstance(result, Exception):
             with pytest.raises(type(result), match=str(result)):
