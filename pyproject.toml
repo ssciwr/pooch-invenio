@@ -65,3 +65,7 @@ write_to = "pooch_invenio/_version.py"
 testpaths = [
     "tests",
 ]
+
+[project.entry-points."pooch.data_repositories"]
+invenio = "pooch_invenio:InvenioRDMRepository"
+konwn_instances_invenio = "pooch_invenio:KnownInstancesInvenioRDMRepository"
