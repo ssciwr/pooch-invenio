@@ -258,10 +258,8 @@ class KnownInstancesInvenioRDMRepository(InvenioRDMRepository):
 
         from urllib.parse import urlsplit  # pylint: disable=C0415
 
-        if urlsplit(archive_url).hostname not in _known_inveniordm_instances():
-            return None
-
-        return cls(doi, base_url, record_id)
+        if any(archive_url.startswith(inst) for inst in _known_inveniordm_instances()):
+            return cls(doi, base_url, record_id)
 
 
 # This class is not strictly needed, as it is implied in above KnownInstancesInvenioRDMRepository.
