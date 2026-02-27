@@ -1,5 +1,6 @@
 from typing import Optional, Dict, Tuple
-from functools import cached_property
+from functools import cached_property, lru_cache
+from importlib.resources import files
 
 from pooch_doi.license import *
 from pooch_doi.repository import DataRepository, DEFAULT_TIMEOUT
@@ -233,7 +234,10 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
         return {k: v["checksum"] for k, v in self.record_files.items()}
 
 
-_KNOWN_INVENIORDM_INSTANCES = ("zenodo.org",)
+@lru_cache(maxsize=1)
+def _known_inveniordm_instances() -> tuple[str, ...]:
+    instances_file = files("pooch_invenio").joinpath("instances.txt")
+    return instances_file.read_text(encoding="utf-8").splitlines()
 
 
 class KnownInstancesInvenioRDMRepository(InvenioRDMRepository):
@@ -254,7 +258,7 @@ class KnownInstancesInvenioRDMRepository(InvenioRDMRepository):
 
         from urllib.parse import urlsplit  # pylint: disable=C0415
 
-        if urlsplit(archive_url).hostname not in _KNOWN_INVENIORDM_INSTANCES:
+        if urlsplit(archive_url).hostname not in _known_inveniordm_instances():
             return None
 
         return cls(doi, base_url, record_id)
