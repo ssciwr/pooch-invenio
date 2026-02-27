@@ -1,5 +1,6 @@
 from typing import Optional, Dict, Tuple
-from functools import cached_property
+from functools import cached_property, lru_cache
+from importlib.resources import files
 
 from pooch_doi.license import *
 from pooch_doi.repository import DataRepository, DEFAULT_TIMEOUT
@@ -233,7 +234,10 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
         return {k: v["checksum"] for k, v in self.record_files.items()}
 
 
-_KNOWN_INVENIORDM_INSTANCES = ("zenodo.org",)
+@lru_cache(maxsize=1)
+def _known_inveniordm_instances() -> tuple[str, ...]:
+    instances_file = files("pooch_invenio").joinpath("instances.txt")
+    return instances_file.read_text(encoding="utf-8").splitlines()
 
 
 class KnownInstancesInvenioRDMRepository(InvenioRDMRepository):
@@ -254,7 +258,18 @@ class KnownInstancesInvenioRDMRepository(InvenioRDMRepository):
 
         from urllib.parse import urlsplit  # pylint: disable=C0415
 
-        if urlsplit(archive_url).hostname not in _KNOWN_INVENIORDM_INSTANCES:
-            return None
+        if any(archive_url.startswith(inst) for inst in _known_inveniordm_instances()):
+            return cls(doi, base_url, record_id)
 
-        return cls(doi, base_url, record_id)
+
+# This class is not strictly needed, as it is implied in above KnownInstancesInvenioRDMRepository.
+# We still add it for the sake of having Zenodo listed as a separate entry in pooch-repositories.
+# Few users of Zenodo will actually know that Zenodo is a special case of InvenioRDM.
+class ZenodoRepository(KnownInstancesInvenioRDMRepository):
+    @property
+    def name(self) -> str:
+        return "Zenodo"  # pragma: no cover
+
+    @property
+    def homepage(self) -> str:
+        return "https://zenodo.org"  # pragma: no cover
