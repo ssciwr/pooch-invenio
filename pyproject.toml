@@ -72,3 +72,4 @@ testpaths = [
 [project.entry-points."pooch.data_repositories"]
 invenio = "pooch_invenio:InvenioRDMRepository"
 konwn_instances_invenio = "pooch_invenio:KnownInstancesInvenioRDMRepository"
+zenodo = "pooch_invenio:ZenodoRepository"
