@@ -268,6 +268,7 @@ class KnownInstancesInvenioRDMRepository(InvenioRDMRepository):
 # Few users of Zenodo will actually know that Zenodo is a special case of InvenioRDM.
 class ZenodoRepository(KnownInstancesInvenioRDMRepository):
     omit_from_repository_list = False
+    allows_self_hosting = False
 
     @property
     def name(self) -> str:
