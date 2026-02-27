@@ -242,6 +242,7 @@ def _known_inveniordm_instances() -> tuple[str, ...]:
 
 class KnownInstancesInvenioRDMRepository(InvenioRDMRepository):
     init_requires_requests = False
+    omit_from_repository_list = True
 
     @classmethod
     def initialize(cls, doi: str, archive_url: str):
@@ -266,6 +267,8 @@ class KnownInstancesInvenioRDMRepository(InvenioRDMRepository):
 # We still add it for the sake of having Zenodo listed as a separate entry in pooch-repositories.
 # Few users of Zenodo will actually know that Zenodo is a special case of InvenioRDM.
 class ZenodoRepository(KnownInstancesInvenioRDMRepository):
+    omit_from_repository_list = False
+
     @property
     def name(self) -> str:
         return "Zenodo"  # pragma: no cover
