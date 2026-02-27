@@ -258,3 +258,16 @@ class KnownInstancesInvenioRDMRepository(InvenioRDMRepository):
             return None
 
         return cls(doi, base_url, record_id)
+
+
+# This class is not strictly needed, as it is implied in above KnownInstancesInvenioRDMRepository.
+# We still add it for the sake of having Zenodo listed as a separate entry in pooch-repositories.
+# Few users of Zenodo will actually know that Zenodo is a special case of InvenioRDM.
+class ZenodoRepository(KnownInstancesInvenioRDMRepository):
+    @property
+    def name(self) -> str:
+        return "Zenodo"  # pragma: no cover
+
+    @property
+    def homepage(self) -> str:
+        return "https://zenodo.org"  # pragma: no cover
