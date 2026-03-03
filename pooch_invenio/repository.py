@@ -235,7 +235,7 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
 
 
 @lru_cache(maxsize=1)
-def _known_inveniordm_instances() -> tuple[str, ...]:
+def _known_inveniordm_instances() -> list[str]:
     instances_file = files("pooch_invenio").joinpath("instances.txt")
     return instances_file.read_text(encoding="utf-8").splitlines()
 
@@ -256,8 +256,6 @@ class KnownInstancesInvenioRDMRepository(InvenioRDMRepository):
 
         base_url = "/".join(parts[:-2])
         record_id = parts[-1]
-
-        from urllib.parse import urlsplit  # pylint: disable=C0415
 
         if any(archive_url.startswith(inst) for inst in _known_inveniordm_instances()):
             return cls(doi, base_url, record_id)
