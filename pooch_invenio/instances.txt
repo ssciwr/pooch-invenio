@@ -6,6 +6,7 @@ https://data.caltech.edu
 https://data.eli-laser.eu/
 https://data.library.wustl.edu/
 https://datarepository.kth.se/
+https://datastore.uni-muenster.de
 https://ddd.uab.cat/?ln=en
 https://escape-ossr.gitlab.io/ossr-pages/
 https://fd-repo.uni-bamberg.de
