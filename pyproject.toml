@@ -13,10 +13,10 @@ build-backend = "setuptools.build_meta"
 # single source of truth for pooch_invenio's version
 [project]
 name = "pooch_invenio"
-description = "Add short description here"
+description = "InvenioRDM (and Zenodo) support for pooch-doi"
 readme = "README.md"
 maintainers = [
-    { name = "Dominic Kempf", email = "your@email.com" },
+    { name = "Dominic Kempf", email = "ssc@uni-heidelberg.de" },
 ]
 dynamic = ["version"]
 requires-python = ">=3.9"
@@ -36,11 +36,6 @@ tests = [
     "pytest",
     "pytest-cov",
     "requests-mock",
-]
-docs = [
-    "sphinx",
-    "sphinx_mdinclude",
-    "sphinx_rtd_theme",
 ]
 
 
