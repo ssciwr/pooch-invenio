@@ -16,8 +16,9 @@ https://hepdata.net/
 https://inspirehep.net/?ln=en
 https://nefeli.helmholtz-munich.de
 https://oedatarep.ct.ingv.it
+https://opencausal.org
 https://repository.tugraz.at/
-https://researchdata.tuwien.at/
+https://researchdata.tuwien.ac.at/
 https://researchdata.uibk.ac.at/
 https://rodare.hzdr.de/
 https://sciencerepository.dk
