@@ -1,11 +1,11 @@
 import pytest
-from pooch_invenio.repository import (
+from doiggie_invenio.repository import (
     InvenioRDMRepository,
     KnownInstancesInvenioRDMRepository,
 )
 from tests.data.zenodo_record import ZenodoTestRecord
 
-pytest_plugins = ["pooch_doi.testkit"]
+pytest_plugins = ["doiggie.testkit"]
 
 
 @pytest.fixture(scope="session")

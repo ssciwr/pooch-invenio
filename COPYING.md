@@ -1,4 +1,4 @@
-This is the list of copyright holders of pooch-invenio.
+This is the list of copyright holders of doiggie-invenio.
 
 For information on the license, see LICENSE.md.
 

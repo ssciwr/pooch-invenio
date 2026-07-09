@@ -21,4 +21,4 @@ jobs:
       uses: ssciwr/pooch-re3data-action@v1
       with:
         software: "InvenioRDM"
-        filename: "pooch_invenio/instances.txt"
+        filename: "doiggie_invenio/instances.txt"

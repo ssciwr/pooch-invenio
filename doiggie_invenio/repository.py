@@ -2,15 +2,15 @@ from typing import Optional, Dict, Tuple
 from functools import cached_property, lru_cache
 from importlib.resources import files
 
-from pooch_doi.license import *
-from pooch_doi.repository import DataRepository, DEFAULT_TIMEOUT
+from doiggie.license import *
+from doiggie.repository import DataRepository, DEFAULT_TIMEOUT
 
 
 class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-docstring
     allowed_exceptions: Tuple[type[Exception]] = ()
 
     # A URL for an issue tracker for this implementation
-    issue_tracker: Optional[str] = "https://github.com/ssciwr/pooch-invenio/issues"
+    issue_tracker: Optional[str] = "https://github.com/ssciwr/doiggie-invenio/issues"
 
     # Whether the repository allows self-hosting
     allows_self_hosting: bool = True
@@ -97,7 +97,7 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
         # Add pooch User-Agent (see https://github.com/fatiando/pooch/issues/502)
         headers.update(
             {
-                "User-Agent": "pooch/1.8.2 ([https://github.com/fatiando/pooch)](https://github.com/ssciwr/pooch-invenio))"
+                "User-Agent": "pooch/1.8.2 ([https://github.com/fatiando/pooch)](https://github.com/ssciwr/doiggie-invenio))"
             }
         )
 
@@ -127,7 +127,7 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
             raise RuntimeError(
                 f"An issue occurred decoding the JSON response from '{url}'."
                 f"This should not happen."
-                f"Please open an issue at https://github.com/ssciwr/pooch-invenio/issues"
+                f"Please open an issue at https://github.com/ssciwr/doiggie-invenio/issues"
             )
 
     @staticmethod
@@ -236,7 +236,7 @@ class InvenioRDMRepository(DataRepository):  # pylint: disable=missing-class-doc
 
 @lru_cache(maxsize=1)
 def _known_inveniordm_instances() -> list[str]:
-    instances_file = files("pooch_invenio").joinpath("instances.txt")
+    instances_file = files("doiggie_invenio").joinpath("instances.txt")
     return instances_file.read_text(encoding="utf-8").splitlines()
 
 
@@ -262,7 +262,7 @@ class KnownInstancesInvenioRDMRepository(InvenioRDMRepository):
 
 
 # This class is not strictly needed, as it is implied in above KnownInstancesInvenioRDMRepository.
-# We still add it for the sake of having Zenodo listed as a separate entry in pooch-repositories.
+# We still add it for the sake of having Zenodo listed as a separate entry in doiggie-repositories.
 # Few users of Zenodo will actually know that Zenodo is a special case of InvenioRDM.
 class ZenodoRepository(KnownInstancesInvenioRDMRepository):
     omit_from_repository_list = False

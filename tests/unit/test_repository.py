@@ -2,8 +2,8 @@ import pytest
 
 from tests.data.zenodo_record import ZenodoTestRecord
 
-from pooch_doi.license import *
-from pooch_invenio import InvenioRDMRepository
+from doiggie.license import *
+from doiggie_invenio import InvenioRDMRepository
 
 
 def test_sanity_checks(sanity_check_data_repo):
@@ -78,7 +78,7 @@ licenses_testcases = [
         RuntimeError(
             f"An issue occurred decoding the JSON response from '{ZenodoTestRecord.url_for(ZenodoTestRecord.endpoints.details)}'."
             f"This should not happen."
-            f"Please open an issue at https://github.com/ssciwr/pooch-invenio/issues"
+            f"Please open an issue at https://github.com/ssciwr/doiggie-invenio/issues"
         ),
     ),
     # TESTCASE 5: 2 custom licenses in API response

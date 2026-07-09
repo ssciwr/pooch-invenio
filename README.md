@@ -1,23 +1,23 @@
-# Welcome to pooch-invenio
+# Welcome to doiggie-invenio
 
 [![License](https://img.shields.io/badge/License-BSD%202--Clause-orange.svg)](https://opensource.org/licenses/BSD-2-Clause)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ssciwr/pooch-invenio/ci.yml?branch=main)](https://github.com/ssciwr/pooch-invenio/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/ssciwr/pooch-invenio/branch/main/graph/badge.svg)](https://codecov.io/gh/ssciwr/pooch-invenio)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ssciwr/doiggie-invenio/ci.yml?branch=main)](https://github.com/ssciwr/doiggie-invenio/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/ssciwr/doiggie-invenio/branch/main/graph/badge.svg)](https://codecov.io/gh/ssciwr/doiggie-invenio)
 
-`pooch-invenio` adds support for the [InvenioRDM data repository software](https://inveniosoftware.org/products/rdm/)
-to the [pooch-doi](https://github.com/ssciwr/pooch-doi) ecosystem. As InvenioRDM is the software powering Zenodo,
+`doiggie-invenio` adds support for the [InvenioRDM data repository software](https://inveniosoftware.org/products/rdm/)
+to the [doiggie](https://github.com/ssciwr/doiggie) ecosystem. As InvenioRDM is the software powering Zenodo,
 this repository implicitly also contains the support for Zenodo.
 
 ## Installation
 
-The Python package `pooch_invenio` can be installed from PyPI:
+The Python package `doiggie-invenio` can be installed from PyPI:
 
 ```
-python -m pip install pooch_invenio
+python -m pip install doiggie-invenio
 ```
 
-If you want to install all available data repository implementations for `pooch-doi`,
-consider install [pooch-repositories](https://github.com/ssciwr/pooch-repositories) instead.
+If you want to install all available data repository implementations for `doiggie`,
+consider install [doiggie-repositories](https://github.com/ssciwr/doiggie-repositories) instead.
 
 ## Known Issues
 

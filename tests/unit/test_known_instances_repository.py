@@ -1,5 +1,5 @@
 from tests.data.zenodo_record import ZenodoTestRecord
-from pooch_invenio import KnownInstancesInvenioRDMRepository
+from doiggie_invenio import KnownInstancesInvenioRDMRepository
 
 
 def test_sanity_checks(sanity_check_data_repo):
