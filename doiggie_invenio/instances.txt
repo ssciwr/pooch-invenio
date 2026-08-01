@@ -1,6 +1,7 @@
 http://opendata.cern.ch/
 https://aperta.ulakbim.gov.tr/
 https://archive.materialscloud.org
+https://archive.nfdi4plants.org/
 https://b2share.eudat.eu/
 https://data.caltech.edu
 https://data.eli-laser.eu/
@@ -11,6 +12,7 @@ https://ddd.uab.cat/?ln=en
 https://escape-ossr.gitlab.io/ossr-pages/
 https://fd-repo.uni-bamberg.de
 https://fdat.uni-tuebingen.de
+https://fdm.dhbw.de
 https://freidata.uni-freiburg.de/
 https://hepdata.net/
 https://inspirehep.net/?ln=en
